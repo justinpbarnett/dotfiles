@@ -1,0 +1,28 @@
+# Neovim
+/nvim/undo
+/nvim/plugin/packer_compiled.lua
+/nvim/.netrwhist
+
+# Logs and temporary files
+*.log
+*.swp
+*.swo
+*~
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Local configuration that shouldn't be shared
+.env
+.env.local
+
+# Package manager directories
+node_modules/
+.pnpm-store/
+
+# Compiled files
+*.o
+*.so
+*.pyc
+__pycache__/
