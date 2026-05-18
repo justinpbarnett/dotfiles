@@ -1,24 +1,33 @@
 return {
-  {
-    "stevearc/conform.nvim",
-    event = { "BufWritePre" },
-    cmd = { "ConformInfo" },
-    config = function()
-      require("conform").setup({
-        formatters_by_ft = {
-          javascript = { "prettier" },
-          typescript = { "prettier" },
-          javascriptreact = { "prettier" },
-          typescriptreact = { "prettier" },
-          php = { "php-cs-fixer" }, -- or pint for Laravel
-          -- cs = { "csharpier" }, -- Disabled, using LSP formatting instead
-        },
-        format_on_save = {
-          timeout_ms = 500,
-          lsp_fallback = true,
-        },
-      })
-      vim.keymap.set("n", "<leader>fm", function() require("conform").format({ async = true, lsp_fallback = true }) end, { desc = "Format file" })
-    end,
+  "stevearc/conform.nvim",
+  event = { "BufWritePre" },
+  cmd = { "ConformInfo" },
+  keys = {
+    { "<leader>cf", function() require("conform").format({ async = true }) end, mode = { "n", "v" }, desc = "Format buffer" },
+  },
+  opts = {
+    formatters_by_ft = {
+      lua = { "stylua" },
+      python = { "ruff_format", "ruff_organize_imports" },
+      javascript = { "prettier" },
+      typescript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescriptreact = { "prettier" },
+      vue = { "prettier" },
+      json = { "prettier" },
+      jsonc = { "prettier" },
+      yaml = { "prettier" },
+      markdown = { "prettier" },
+      html = { "prettier" },
+      css = { "prettier" },
+      c = { "clang-format" },
+      cpp = { "clang-format" },
+      cs = { "csharpier" },
+      php = { "pint" },
+    },
+    format_on_save = {
+      lsp_format = "fallback",
+      timeout_ms = 1000,
+    },
   },
 }
