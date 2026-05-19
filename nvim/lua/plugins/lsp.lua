@@ -27,9 +27,13 @@ return {
         },
       })
 
-      local brew_clangd = "/opt/homebrew/opt/llvm/bin/clangd"
-      local clangd_bin = vim.fn.executable(brew_clangd) == 1 and brew_clangd or "clangd"
-      vim.lsp.config("clangd", { cmd = { clangd_bin, "--background-index", "--clang-tidy" } })
+      local function clangd_path()
+        for _, p in ipairs({ "/opt/homebrew/opt/llvm/bin/clangd", "/usr/local/opt/llvm/bin/clangd" }) do
+          if vim.fn.executable(p) == 1 then return p end
+        end
+        return "clangd"
+      end
+      vim.lsp.config("clangd", { cmd = { clangd_path(), "--background-index", "--clang-tidy" } })
 
       vim.lsp.enable({
         "lua_ls",

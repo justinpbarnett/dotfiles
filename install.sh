@@ -8,7 +8,6 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
 TMUX_LINK="$HOME/.config/tmux/tmux.conf"
 ALACRITTY_LINK="$HOME/.config/alacritty/alacritty.toml"
-# clangd config path is OS-specific.
 case "$(uname -s)" in
 Darwin) CLANGD_LINK="$HOME/Library/Preferences/clangd/config.yaml" ;;
 *) CLANGD_LINK="${XDG_CONFIG_HOME:-$HOME/.config}/clangd/config.yaml" ;;
