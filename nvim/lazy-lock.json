@@ -8,11 +8,12 @@
   "lualine.nvim": { "branch": "master", "commit": "131a558e13f9f28b15cd235557150ccb23f89286" },
   "matteblack.nvim": { "branch": "main", "commit": "a8a039f5d6189b28d76fa0221e64965efec7e996" },
   "mini.pairs": { "branch": "main", "commit": "30cf2f01c4aaa2033db67376b9924fa2442c05d6" },
-  "nvim-lspconfig": { "branch": "master", "commit": "3de240997fc3208eb29df5e5c17ba4665961bd84" },
+  "nvim-lspconfig": { "branch": "master", "commit": "246572944c2a1e2a646c2e7609ff619b0fe74c18" },
   "nvim-treesitter": { "branch": "main", "commit": "4916d6592ede8c07973490d9322f187e07dfefac" },
   "oil.nvim": { "branch": "master", "commit": "0fcc83805ad11cf714a949c98c605ed717e0b83e" },
   "plenary.nvim": { "branch": "master", "commit": "74b06c6c75e4eeb3108ec01852001636d85a932b" },
-  "roslyn.nvim": { "branch": "main", "commit": "90d43d35f0ebb5ecf1df734194cb568a162de4cb" },
+  "roslyn.nvim": { "branch": "main", "commit": "49526a2958893d0c8000d03b16ed923340ce13cc" },
   "supermaven-nvim": { "branch": "main", "commit": "07d20fce48a5629686aefb0a7cd4b25e33947d50" },
+  "toggleterm.nvim": { "branch": "main", "commit": "50ea089fc548917cc3cc16b46a8211833b9e3c7c" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" }
 }
