@@ -7,6 +7,7 @@ return {
       { "<leader>c", group = "code" },
       { "<leader>g", group = "git" },
       { "<leader>r", group = "rename / resume" },
+      { "<leader>t", group = "toggle" },
     },
   },
 }

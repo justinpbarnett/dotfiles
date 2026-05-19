@@ -1,6 +1,14 @@
 return {
   "supermaven-inc/supermaven-nvim",
   event = "InsertEnter",
+  cmd = {
+    "SupermavenStart", "SupermavenStop", "SupermavenRestart",
+    "SupermavenStatus", "SupermavenToggle",
+    "SupermavenUseFree", "SupermavenUsePro", "SupermavenLogout",
+  },
+  keys = {
+    { "<leader>ts", "<cmd>SupermavenToggle<cr>", desc = "Toggle supermaven" },
+  },
   config = function()
     require("supermaven-nvim").setup({
       keymaps = {
