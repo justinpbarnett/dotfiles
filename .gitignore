@@ -1,6 +1,7 @@
 *
 !.gitignore
 !install.sh
+!uninstall.sh
 !nvim/
 !nvim/**
 !tmux/
