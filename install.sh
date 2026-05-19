@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Bootstraps the nvim config on a fresh macOS or Arch Linux machine.
+# Bootstraps the nvim and tmux configs on a fresh macOS or Arch Linux machine.
 # Idempotent: safe to re-run.
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
+TMUX_LINK="$HOME/.config/tmux/tmux.conf"
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m  %s\n' "$*" >&2; }
@@ -35,6 +36,7 @@ install_mac() {
   log "Installing packages via brew"
   brew install \
     neovim \
+    tmux \
     fzf bat ripgrep fd \
     lazygit \
     lua-language-server stylua \
@@ -50,6 +52,7 @@ install_arch() {
   log "Installing packages via pacman"
   sudo pacman -S --needed --noconfirm \
     neovim \
+    tmux \
     fzf bat ripgrep fd \
     lazygit \
     lua-language-server \
@@ -123,6 +126,24 @@ else
   log "Symlinking $DOTFILES/nvim -> $NVIM_LINK"
   mkdir -p "$(dirname "$NVIM_LINK")"
   ln -s "$DOTFILES/nvim" "$NVIM_LINK"
+fi
+
+# Symlink tmux config
+if [[ -L "$TMUX_LINK" ]]; then
+  current="$(readlink "$TMUX_LINK")"
+  if [[ "$current" == "$DOTFILES/tmux/tmux.conf" ]]; then
+    log "tmux already symlinked correctly"
+  else
+    warn "$TMUX_LINK points elsewhere: $current"
+    warn "Remove or fix it, then re-run."
+  fi
+elif [[ -e "$TMUX_LINK" ]]; then
+  warn "$TMUX_LINK exists and is not a symlink."
+  warn "Move it aside (mv $TMUX_LINK $TMUX_LINK.bak), then re-run."
+else
+  log "Symlinking $DOTFILES/tmux/tmux.conf -> $TMUX_LINK"
+  mkdir -p "$(dirname "$TMUX_LINK")"
+  ln -s "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK"
 fi
 
 cat <<'EOF'
