@@ -4,36 +4,38 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     dependencies = { "saghen/blink.cmp" },
     config = function()
-      local lspconfig = require("lspconfig")
       local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-      local servers = {
-        lua_ls = {
-          settings = {
-            Lua = {
-              workspace = { checkThirdParty = false },
-              telemetry = { enable = false },
-              diagnostics = { globals = { "vim" } },
-              format = { enable = false },
-            },
-          },
-        },
-        basedpyright = {},
-        ruff = {},
-        clangd = {},
-        vtsls = {},
-        volar = {
-          init_options = {
-            vue = { hybridMode = false },
-          },
-        },
-        intelephense = {},
-      }
+      vim.lsp.config("*", {
+        capabilities = capabilities,
+      })
 
-      for name, cfg in pairs(servers) do
-        cfg.capabilities = capabilities
-        lspconfig[name].setup(cfg)
-      end
+      vim.lsp.config("lua_ls", {
+        settings = {
+          Lua = {
+            workspace = { checkThirdParty = false },
+            telemetry = { enable = false },
+            diagnostics = { globals = { "vim" } },
+            format = { enable = false },
+          },
+        },
+      })
+
+      vim.lsp.config("volar", {
+        init_options = {
+          vue = { hybridMode = false },
+        },
+      })
+
+      vim.lsp.enable({
+        "lua_ls",
+        "basedpyright",
+        "ruff",
+        "clangd",
+        "vtsls",
+        "volar",
+        "intelephense",
+      })
 
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
