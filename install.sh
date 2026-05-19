@@ -7,6 +7,7 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
 TMUX_LINK="$HOME/.config/tmux/tmux.conf"
+ALACRITTY_LINK="$HOME/.config/alacritty/alacritty.toml"
 # clangd config path is OS-specific.
 case "$(uname -s)" in
 Darwin) CLANGD_LINK="$HOME/Library/Preferences/clangd/config.yaml" ;;
@@ -51,6 +52,7 @@ install_mac() {
     llvm \
     shellcheck shfmt
   has dotnet || brew install --cask dotnet-sdk
+  has alacritty || brew install --cask alacritty
 }
 
 install_arch() {
@@ -66,7 +68,8 @@ install_arch() {
     composer \
     clang \
     dotnet-sdk \
-    shellcheck shfmt
+    shellcheck shfmt \
+    alacritty
 
   local helper=""
   if has paru; then
@@ -139,6 +142,7 @@ symlink_config() {
 symlink_config "$DOTFILES/nvim" "$NVIM_LINK" "nvim"
 symlink_config "$DOTFILES/clangd/config.yaml" "$CLANGD_LINK" "clangd config"
 symlink_config "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK" "tmux"
+symlink_config "$DOTFILES/alacritty/alacritty.toml" "$ALACRITTY_LINK" "alacritty"
 
 cat <<'EOF'
 

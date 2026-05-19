@@ -7,3 +7,5 @@
 !tmux/**
 !clangd/
 !clangd/**
+!alacritty/
+!alacritty/**
