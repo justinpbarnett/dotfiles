@@ -7,6 +7,11 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
 TMUX_LINK="$HOME/.config/tmux/tmux.conf"
+# clangd config path is OS-specific.
+case "$(uname -s)" in
+Darwin) CLANGD_LINK="$HOME/Library/Preferences/clangd/config.yaml" ;;
+*) CLANGD_LINK="${XDG_CONFIG_HOME:-$HOME/.config}/clangd/config.yaml" ;;
+esac
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m  %s\n' "$*" >&2; }
@@ -110,41 +115,30 @@ else
   warn "composer not found, skipping laravel/pint"
 fi
 
-# Symlink nvim config
-if [[ -L "$NVIM_LINK" ]]; then
-  current="$(readlink "$NVIM_LINK")"
-  if [[ "$current" == "$DOTFILES/nvim" ]]; then
-    log "nvim already symlinked correctly"
+symlink_config() {
+  local src="$1" dst="$2" label="$3"
+  if [[ -L "$dst" ]]; then
+    local current
+    current="$(readlink "$dst")"
+    if [[ "$current" == "$src" ]]; then
+      log "$label already symlinked correctly"
+    else
+      warn "$dst points elsewhere: $current"
+      warn "Remove or fix it, then re-run."
+    fi
+  elif [[ -e "$dst" ]]; then
+    warn "$dst exists and is not a symlink."
+    warn "Move it aside (mv $dst $dst.bak), then re-run."
   else
-    warn "$NVIM_LINK points elsewhere: $current"
-    warn "Remove or fix it, then re-run."
+    log "Symlinking $src -> $dst"
+    mkdir -p "$(dirname "$dst")"
+    ln -s "$src" "$dst"
   fi
-elif [[ -e "$NVIM_LINK" ]]; then
-  warn "$NVIM_LINK exists and is not a symlink."
-  warn "Move it aside (mv $NVIM_LINK $NVIM_LINK.bak), then re-run."
-else
-  log "Symlinking $DOTFILES/nvim -> $NVIM_LINK"
-  mkdir -p "$(dirname "$NVIM_LINK")"
-  ln -s "$DOTFILES/nvim" "$NVIM_LINK"
-fi
+}
 
-# Symlink tmux config
-if [[ -L "$TMUX_LINK" ]]; then
-  current="$(readlink "$TMUX_LINK")"
-  if [[ "$current" == "$DOTFILES/tmux/tmux.conf" ]]; then
-    log "tmux already symlinked correctly"
-  else
-    warn "$TMUX_LINK points elsewhere: $current"
-    warn "Remove or fix it, then re-run."
-  fi
-elif [[ -e "$TMUX_LINK" ]]; then
-  warn "$TMUX_LINK exists and is not a symlink."
-  warn "Move it aside (mv $TMUX_LINK $TMUX_LINK.bak), then re-run."
-else
-  log "Symlinking $DOTFILES/tmux/tmux.conf -> $TMUX_LINK"
-  mkdir -p "$(dirname "$TMUX_LINK")"
-  ln -s "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK"
-fi
+symlink_config "$DOTFILES/nvim" "$NVIM_LINK" "nvim"
+symlink_config "$DOTFILES/clangd/config.yaml" "$CLANGD_LINK" "clangd config"
+symlink_config "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK" "tmux"
 
 cat <<'EOF'
 

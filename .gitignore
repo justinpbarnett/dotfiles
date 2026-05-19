@@ -5,3 +5,5 @@
 !nvim/**
 !tmux/
 !tmux/**
+!clangd/
+!clangd/**

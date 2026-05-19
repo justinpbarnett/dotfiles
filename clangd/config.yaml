@@ -1,0 +1,13 @@
+Diagnostics:
+  ClangTidy:
+    Add:
+      - cppcoreguidelines-*
+      - bugprone-*
+      - modernize-*
+      - performance-*
+    Remove:
+      - cppcoreguidelines-avoid-magic-numbers
+      - cppcoreguidelines-pro-bounds-array-to-pointer-decay
+      - modernize-use-trailing-return-type
+    CheckOptions:
+      cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true

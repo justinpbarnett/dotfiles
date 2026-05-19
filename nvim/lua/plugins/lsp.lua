@@ -27,6 +27,10 @@ return {
         },
       })
 
+      local brew_clangd = "/opt/homebrew/opt/llvm/bin/clangd"
+      local clangd_bin = vim.fn.executable(brew_clangd) == 1 and brew_clangd or "clangd"
+      vim.lsp.config("clangd", { cmd = { clangd_bin, "--background-index", "--clang-tidy" } })
+
       vim.lsp.enable({
         "lua_ls",
         "basedpyright",
@@ -37,6 +41,22 @@ return {
         "intelephense",
         "bashls",
       })
+
+      local function open_clang_tidy_rule()
+        local lnum = vim.fn.line(".") - 1
+        for _, d in ipairs(vim.diagnostic.get(0, { lnum = lnum })) do
+          local code = type(d.code) == "string" and d.code or nil
+          local group, rest = code and code:match("^([^-]+)%-(.+)$")
+          if group and rest then
+            vim.ui.open(string.format(
+              "https://clang.llvm.org/extra/clang-tidy/checks/%s/%s.html",
+              group, rest
+            ))
+            return
+          end
+        end
+        vim.notify("No clang-tidy diagnostic at cursor", vim.log.levels.WARN)
+      end
 
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
@@ -55,6 +75,11 @@ return {
           bmap({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
           bmap("n", "<leader>cd", vim.diagnostic.open_float, "Line diagnostics")
           bmap("n", "<leader>cs", vim.lsp.buf.signature_help, "Signature help")
+
+          local ft = vim.bo[buf].filetype
+          if ft == "c" or ft == "cpp" then
+            bmap("n", "<leader>cR", open_clang_tidy_rule, "Open clang-tidy rule docs")
+          end
         end,
       })
     end,
