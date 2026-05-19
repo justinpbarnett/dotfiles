@@ -24,6 +24,8 @@ return {
       cpp = { "clang-format" },
       cs = { "csharpier" },
       php = { "pint" },
+      sh = { "shfmt" },
+      bash = { "shfmt" },
     },
     format_on_save = {
       lsp_format = "fallback",

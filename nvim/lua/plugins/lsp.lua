@@ -35,6 +35,7 @@ return {
         "vtsls",
         "volar",
         "intelephense",
+        "bashls",
       })
 
       vim.api.nvim_create_autocmd("LspAttach", {

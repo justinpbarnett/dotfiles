@@ -7,22 +7,25 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
 
-log()  { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m  %s\n' "$*" >&2; }
-err()  { printf '\033[1;31mxx\033[0m  %s\n' "$*" >&2; exit 1; }
-has()  { command -v "$1" >/dev/null 2>&1; }
+err() {
+  printf '\033[1;31mxx\033[0m  %s\n' "$*" >&2
+  exit 1
+}
+has() { command -v "$1" >/dev/null 2>&1; }
 
 OS=""
 case "$(uname -s)" in
-  Darwin) OS=mac ;;
-  Linux)
-    if [[ -f /etc/arch-release ]]; then
-      OS=arch
-    else
-      err "Unsupported Linux distro. Only Arch is set up. Edit install.sh to add support."
-    fi
-    ;;
-  *) err "Unsupported OS: $(uname -s)" ;;
+Darwin) OS=mac ;;
+Linux)
+  if [[ -f /etc/arch-release ]]; then
+    OS=arch
+  else
+    err "Unsupported Linux distro. Only Arch is set up. Edit install.sh to add support."
+  fi
+  ;;
+*) err "Unsupported OS: $(uname -s)" ;;
 esac
 
 log "Detected OS: $OS"
@@ -38,7 +41,8 @@ install_mac() {
     basedpyright ruff \
     node \
     composer \
-    llvm
+    llvm \
+    shellcheck shfmt
   has dotnet || brew install --cask dotnet-sdk
 }
 
@@ -53,11 +57,14 @@ install_arch() {
     nodejs npm \
     composer \
     clang \
-    dotnet-sdk
+    dotnet-sdk \
+    shellcheck shfmt
 
   local helper=""
-  if has paru; then helper=paru
-  elif has yay; then helper=yay
+  if has paru; then
+    helper=paru
+  elif has yay; then
+    helper=yay
   fi
 
   if [[ -n "$helper" ]]; then
@@ -70,8 +77,8 @@ install_arch() {
 }
 
 case "$OS" in
-  mac)  install_mac ;;
-  arch) install_arch ;;
+mac) install_mac ;;
+arch) install_arch ;;
 esac
 
 if has npm; then
@@ -80,6 +87,7 @@ if has npm; then
     @vtsls/language-server \
     @vue/language-server \
     intelephense \
+    bash-language-server \
     prettier
 else
   warn "npm not found, skipping vtsls/volar/intelephense/prettier"
