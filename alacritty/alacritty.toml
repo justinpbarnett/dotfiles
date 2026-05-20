@@ -30,5 +30,5 @@ bindings = [
 { key = "Insert", mods = "Control", action = "Copy" },
 { key = "Return", mods = "Shift", chars = "\u001B\r" },
 # Send Ctrl+_ (0x1f) for Ctrl+/ so nvim can bind it distinctly.
-{ key = "Slash", mods = "Control", chars = "\u001F" }
+# { key = "Slash", mods = "Control", chars = "\u001F" }
 ]
