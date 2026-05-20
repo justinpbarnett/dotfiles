@@ -70,7 +70,14 @@ return {
           end
 
           bmap("n", "gd", vim.lsp.buf.definition, "Goto definition")
-          bmap("n", "gD", vim.lsp.buf.declaration, "Goto declaration")
+          bmap("n", "gD", function()
+            local clients = vim.lsp.get_clients({ bufnr = buf, method = "textDocument/declaration" })
+            if #clients == 0 then
+              vim.lsp.buf.definition()
+            else
+              vim.lsp.buf.declaration()
+            end
+          end, "Goto declaration (falls back to definition)")
           bmap("n", "gi", vim.lsp.buf.implementation, "Goto implementation")
           bmap("n", "gr", vim.lsp.buf.references, "References")
           bmap("n", "gt", vim.lsp.buf.type_definition, "Goto type definition")
