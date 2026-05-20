@@ -48,6 +48,7 @@ opt.number = true
 opt.relativenumber = true
 opt.signcolumn = "yes"
 opt.cursorline = true
+opt.colorcolumn = "80"
 opt.scrolloff = 8
 opt.sidescrolloff = 8
 
