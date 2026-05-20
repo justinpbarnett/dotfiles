@@ -112,6 +112,63 @@ else
   warn "dotnet not found, skipping csharpier"
 fi
 
+install_roslyn_ls() {
+  has dotnet || { warn "dotnet not found, skipping Microsoft.CodeAnalysis.LanguageServer"; return; }
+  has unzip || { warn "unzip not found, skipping Microsoft.CodeAnalysis.LanguageServer"; return; }
+
+  local rid
+  case "$(uname -s)/$(uname -m)" in
+    Darwin/arm64)        rid="osx-arm64" ;;
+    Darwin/x86_64)       rid="osx-x64" ;;
+    Linux/x86_64)        rid="linux-x64" ;;
+    Linux/aarch64|Linux/arm64) rid="linux-arm64" ;;
+    *) warn "unsupported platform for roslyn LSP: $(uname -s)/$(uname -m)"; return ;;
+  esac
+
+  # Pinned to a 4.14.x build (targets .NET 9). Bump when .NET 10 SDK is on the box
+  # and you want Roslyn 5.x features.
+  local version="4.14.0-3.26268.4"
+  local install_dir="$HOME/.local/share/roslyn-ls"
+  local bin="$HOME/.local/bin/Microsoft.CodeAnalysis.LanguageServer"
+
+  if [[ -f "$install_dir/.version" ]] && [[ "$(<"$install_dir/.version")" == "$version" ]] && [[ -x "$bin" ]]; then
+    log "Microsoft.CodeAnalysis.LanguageServer $version already installed"
+    return
+  fi
+
+  log "Installing Microsoft.CodeAnalysis.LanguageServer $version ($rid)"
+  local pkg_url="https://pkgs.dev.azure.com/azure-public/vside/_packaging/vs-impl/nuget/v3/flat2/microsoft.codeanalysis.languageserver.${rid}/${version}/microsoft.codeanalysis.languageserver.${rid}.${version}.nupkg"
+  local tmpdir
+  tmpdir=$(mktemp -d) || { warn "failed to create tmpdir"; return; }
+
+  local status=0
+  (
+    set -e
+    curl -fsSL -o "$tmpdir/lsp.nupkg" "$pkg_url"
+    unzip -q "$tmpdir/lsp.nupkg" -d "$tmpdir/pkg"
+    local src="$tmpdir/pkg/content/LanguageServer/$rid"
+    [[ -f "$src/Microsoft.CodeAnalysis.LanguageServer.dll" ]]
+    rm -rf "$install_dir"
+    mkdir -p "$install_dir"
+    cp -R "$src/." "$install_dir/"
+    echo "$version" > "$install_dir/.version"
+  ) || status=$?
+  rm -rf "$tmpdir"
+  if [[ $status -ne 0 ]]; then
+    warn "Microsoft.CodeAnalysis.LanguageServer install failed (download/extract/layout)"
+    return
+  fi
+
+  mkdir -p "$HOME/.local/bin"
+  cat > "$bin" <<EOF
+#!/bin/sh
+exec dotnet "$install_dir/Microsoft.CodeAnalysis.LanguageServer.dll" "\$@"
+EOF
+  chmod +x "$bin"
+}
+
+install_roslyn_ls
+
 if has composer; then
   log "Installing composer globals"
   composer global require laravel/pint
