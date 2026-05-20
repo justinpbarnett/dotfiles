@@ -42,6 +42,10 @@ opt.pumheight = 12
 opt.mouse = "a"
 opt.confirm = true
 
+opt.belloff = "all"
+opt.visualbell = false
+opt.errorbells = false
+
 vim.diagnostic.config({
   virtual_text = true,
   severity_sort = true,
