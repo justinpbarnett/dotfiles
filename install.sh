@@ -41,6 +41,7 @@ install_mac() {
   log "Installing packages via brew"
   brew install \
     neovim \
+    tree-sitter-cli \
     tmux \
     fzf bat ripgrep fd \
     lazygit \
@@ -58,6 +59,7 @@ install_arch() {
   log "Installing packages via pacman"
   sudo pacman -S --needed --noconfirm \
     neovim \
+    tree-sitter-cli \
     tmux \
     fzf bat ripgrep fd \
     lazygit \
