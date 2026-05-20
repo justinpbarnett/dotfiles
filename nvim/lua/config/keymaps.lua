@@ -45,3 +45,114 @@ map("v", "<", "<gv")
 map("v", ">", ">gv")
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+local function nvim_log_path()
+  return vim.env.NVIM_LOG_FILE or (vim.fn.stdpath("log") .. "/log")
+end
+
+local function is_log_header(line)
+  return line:match("^%u%u%u %d%d%d%d%-") ~= nil
+end
+
+local function yank_to_clipboard(text, label, n)
+  vim.fn.setreg("+", text)
+  vim.fn.setreg('"', text)
+  vim.notify("Copied " .. label .. " (" .. n .. " lines) to clipboard")
+end
+
+map("n", "<leader>ll", function()
+  local path = nvim_log_path()
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("nvim log not found at " .. path, vim.log.levels.WARN)
+    return
+  end
+  vim.cmd("split " .. vim.fn.fnameescape(path))
+  vim.cmd("normal! G")
+end, { desc = "Open nvim error log" })
+
+local function yank_latest_log_entry(match_fn, label)
+  local path = nvim_log_path()
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("nvim log not found at " .. path, vim.log.levels.WARN)
+    return
+  end
+  local lines = vim.fn.readfile(path)
+  local start
+  for i = #lines, 1, -1 do
+    if match_fn(lines[i]) then
+      start = i
+      break
+    end
+  end
+  if not start then
+    vim.notify("No " .. label .. " entries in nvim log", vim.log.levels.INFO)
+    return
+  end
+  local block = { lines[start] }
+  for j = start + 1, #lines do
+    if is_log_header(lines[j]) then break end
+    table.insert(block, lines[j])
+  end
+  yank_to_clipboard(table.concat(block, "\n"), "latest " .. label, #block)
+end
+
+local function is_err(line) return line:match("^ERR ") ~= nil end
+local function is_warn(line) return line:match("^WRN ") ~= nil end
+
+map("n", "<leader>le", function() yank_latest_log_entry(is_err, "error") end, { desc = "Yank latest nvim error" })
+map("n", "<leader>lw", function() yank_latest_log_entry(is_warn, "warning") end, { desc = "Yank latest nvim warning" })
+local function looks_problematic(line)
+  if line:match("^E%d+:") or line:match("^W%d+:") then return true end
+  local l = line:lower()
+  return l:find("error", 1, true)
+    or l:find("warn", 1, true)
+    or l:find("fail", 1, true)
+    or l:find("not found", 1, true)
+    or l:find("not on path", 1, true)
+end
+
+map("n", "<leader>ly", function()
+  local out = vim.api.nvim_exec2("messages", { output = true }).output
+  if out == "" then
+    vim.notify("No :messages output", vim.log.levels.INFO)
+    return
+  end
+  local lines = vim.split(out, "\n", { plain = true })
+  local start
+  for i = #lines, 1, -1 do
+    if looks_problematic(lines[i]) then
+      start = i
+      break
+    end
+  end
+  if not start then
+    vim.notify("No error/warning found in :messages", vim.log.levels.INFO)
+    return
+  end
+  local block = {}
+  for j = start, #lines do
+    table.insert(block, lines[j])
+  end
+  yank_to_clipboard(table.concat(block, "\n"), "latest message error/warning", #block)
+end, { desc = "Yank latest error/warning from :messages" })
+
+map("n", "<leader>lm", "<cmd>messages<cr>", { desc = "Show :messages" })
+
+map("n", "<leader>lM", function()
+  local out = vim.api.nvim_exec2("messages", { output = true }).output
+  if out == "" then
+    vim.notify("No :messages output", vim.log.levels.INFO)
+    return
+  end
+  yank_to_clipboard(out, ":messages", #vim.split(out, "\n", { plain = true }))
+end, { desc = "Yank :messages to clipboard" })
+
+map("n", "<leader>lL", function()
+  local path = vim.fn.stdpath("state") .. "/lsp.log"
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("LSP log not found at " .. path, vim.log.levels.WARN)
+    return
+  end
+  vim.cmd("split " .. vim.fn.fnameescape(path))
+  vim.cmd("normal! G")
+end, { desc = "Open LSP log" })
