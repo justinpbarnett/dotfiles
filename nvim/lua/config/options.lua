@@ -1,5 +1,49 @@
 local opt = vim.opt
 
+-- Always use the OS clipboard provider for +/* registers. Without this, Neovim
+-- can fall back to OSC52, which writes to the terminal clipboard instead of the
+-- machine clipboard in some terminal/tmux setups.
+if vim.fn.executable("pbcopy") == 1 and vim.fn.executable("pbpaste") == 1 then
+  vim.g.clipboard = {
+    name = "macOS clipboard",
+    copy = {
+      ["+"] = "pbcopy",
+      ["*"] = "pbcopy",
+    },
+    paste = {
+      ["+"] = "pbpaste",
+      ["*"] = "pbpaste",
+    },
+    cache_enabled = 0,
+  }
+elseif vim.fn.executable("wl-copy") == 1 and vim.fn.executable("wl-paste") == 1 then
+  vim.g.clipboard = {
+    name = "wayland clipboard",
+    copy = {
+      ["+"] = { "wl-copy", "--foreground", "--type", "text/plain" },
+      ["*"] = { "wl-copy", "--foreground", "--primary", "--type", "text/plain" },
+    },
+    paste = {
+      ["+"] = { "wl-paste", "--no-newline" },
+      ["*"] = { "wl-paste", "--no-newline", "--primary" },
+    },
+    cache_enabled = 0,
+  }
+elseif vim.fn.executable("xclip") == 1 then
+  vim.g.clipboard = {
+    name = "xclip clipboard",
+    copy = {
+      ["+"] = { "xclip", "-selection", "clipboard" },
+      ["*"] = { "xclip", "-selection", "primary" },
+    },
+    paste = {
+      ["+"] = { "xclip", "-selection", "clipboard", "-o" },
+      ["*"] = { "xclip", "-selection", "primary", "-o" },
+    },
+    cache_enabled = 0,
+  }
+end
+
 opt.number = true
 opt.relativenumber = true
 opt.signcolumn = "yes"
