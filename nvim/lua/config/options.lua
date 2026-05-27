@@ -87,6 +87,12 @@ opt.pumheight = 12
 opt.mouse = "a"
 opt.confirm = true
 
+opt.foldmethod = "expr"
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldcolumn = "1"
+
 opt.belloff = "all"
 opt.visualbell = false
 opt.errorbells = false

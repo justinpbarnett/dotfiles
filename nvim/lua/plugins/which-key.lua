@@ -8,6 +8,7 @@ return {
       { "<leader>g", group = "git" },
       { "<leader>r", group = "rename / resume" },
       { "<leader>t", group = "toggle" },
+      { "<leader>z", group = "fold" },
     },
   },
 }
