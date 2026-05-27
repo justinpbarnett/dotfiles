@@ -11,6 +11,7 @@ return {
   keys = {
     { "<leader>f", function() require("fzf-lua").files() end, desc = "Find files" },
     { "<leader>/", function() require("fzf-lua").live_grep() end, desc = "Live grep" },
+    { "<leader>g", function() require("fzf-lua").live_grep() end, desc = "Live grep" },
     { "<leader>b", function() require("fzf-lua").buffers() end, desc = "Buffers" },
     { "<leader>s", function() require("fzf-lua").lsp_live_workspace_symbols() end, desc = "Workspace symbols" },
     { "<leader>d", function() require("fzf-lua").diagnostics_workspace() end, desc = "Diagnostics" },
