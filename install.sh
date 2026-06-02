@@ -8,6 +8,7 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
 TMUX_LINK="$HOME/.config/tmux/tmux.conf"
 ALACRITTY_LINK="$HOME/.config/alacritty/alacritty.toml"
+SESSIONIZER_LINK="$HOME/.local/bin/tmux-sessionizer"
 case "$(uname -s)" in
 Darwin) CLANGD_LINK="$HOME/Library/Preferences/clangd/config.yaml" ;;
 *) CLANGD_LINK="${XDG_CONFIG_HOME:-$HOME/.config}/clangd/config.yaml" ;;
@@ -201,6 +202,7 @@ symlink_config "$DOTFILES/nvim" "$NVIM_LINK" "nvim"
 symlink_config "$DOTFILES/clangd/config.yaml" "$CLANGD_LINK" "clangd config"
 symlink_config "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK" "tmux"
 symlink_config "$DOTFILES/alacritty/alacritty.toml" "$ALACRITTY_LINK" "alacritty"
+symlink_config "$DOTFILES/tmux/tmux-sessionizer" "$SESSIONIZER_LINK" "tmux-sessionizer"
 
 cat <<'EOF'
 
