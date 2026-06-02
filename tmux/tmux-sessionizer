@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-project_dirs=("$HOME/dev" "$HOME/.config" "$HOME/dev/practice")
+candidate_dirs=("$HOME/dev" "$HOME/.config" "$HOME/dev/practice")
+project_dirs=()
+for dir in "${candidate_dirs[@]}"; do
+    [[ -d "$dir" ]] && project_dirs+=("$dir")
+done
+[[ ${#project_dirs[@]} -eq 0 ]] && exit 0
 
 selected_dir=$(find "${project_dirs[@]}" -maxdepth 2 -type d -print 2>/dev/null | sort -u | fzf)
 [[ -z "$selected_dir" ]] && exit 0
