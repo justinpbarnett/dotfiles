@@ -10,3 +10,7 @@
 !clangd/**
 !alacritty/
 !alacritty/**
+!zsh/
+!zsh/**
+!yazi/
+!yazi/**

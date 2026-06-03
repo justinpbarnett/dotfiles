@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Bootstraps the nvim and tmux configs on a fresh macOS or Arch Linux machine.
+# Bootstraps shell, nvim, tmux, yazi, and related configs on macOS or Arch Linux.
 # Idempotent: safe to re-run.
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
+YAZI_LINK="$HOME/.config/yazi"
 TMUX_LINK="$HOME/.config/tmux/tmux.conf"
 ALACRITTY_LINK="$HOME/.config/alacritty/alacritty.toml"
 SESSIONIZER_LINK="$HOME/.local/bin/tmux-sessionizer"
+ZSHRC_LINK="${ZDOTDIR:-$HOME}/.zshrc"
 case "$(uname -s)" in
 Darwin) CLANGD_LINK="$HOME/Library/Preferences/clangd/config.yaml" ;;
 *) CLANGD_LINK="${XDG_CONFIG_HOME:-$HOME/.config}/clangd/config.yaml" ;;
@@ -45,6 +47,7 @@ install_mac() {
     tree-sitter-cli \
     tmux \
     fzf bat ripgrep fd \
+    yazi chafa \
     lazygit \
     lua-language-server stylua \
     basedpyright ruff \
@@ -63,6 +66,7 @@ install_arch() {
     tree-sitter-cli \
     tmux \
     fzf bat ripgrep fd \
+    yazi chafa \
     lazygit \
     lua-language-server \
     ruff \
@@ -103,7 +107,7 @@ if has npm; then
     bash-language-server \
     prettier
 else
-  warn "npm not found, skipping vtsls/volar/intelephense/prettier"
+  warn "npm not found, skipping vtsls/vue_ls/intelephense/prettier"
 fi
 
 if has dotnet; then
@@ -198,7 +202,9 @@ symlink_config() {
   fi
 }
 
+symlink_config "$DOTFILES/zsh/zshrc" "$ZSHRC_LINK" "zshrc"
 symlink_config "$DOTFILES/nvim" "$NVIM_LINK" "nvim"
+symlink_config "$DOTFILES/yazi" "$YAZI_LINK" "yazi"
 symlink_config "$DOTFILES/clangd/config.yaml" "$CLANGD_LINK" "clangd config"
 symlink_config "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK" "tmux"
 symlink_config "$DOTFILES/alacritty/alacritty.toml" "$ALACRITTY_LINK" "alacritty"

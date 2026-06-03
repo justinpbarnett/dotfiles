@@ -7,6 +7,8 @@ set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NVIM_LINK="$HOME/.config/nvim"
+YAZI_LINK="$HOME/.config/yazi"
+ZSHRC_LINK="${ZDOTDIR:-$HOME}/.zshrc"
 TMUX_LINK="$HOME/.config/tmux/tmux.conf"
 ALACRITTY_LINK="$HOME/.config/alacritty/alacritty.toml"
 case "$(uname -s)" in
@@ -36,7 +38,9 @@ unlink_config() {
   fi
 }
 
+unlink_config "$DOTFILES/zsh/zshrc" "$ZSHRC_LINK" "zshrc"
 unlink_config "$DOTFILES/nvim" "$NVIM_LINK" "nvim"
+unlink_config "$DOTFILES/yazi" "$YAZI_LINK" "yazi"
 unlink_config "$DOTFILES/clangd/config.yaml" "$CLANGD_LINK" "clangd config"
 unlink_config "$DOTFILES/tmux/tmux.conf" "$TMUX_LINK" "tmux"
 unlink_config "$DOTFILES/alacritty/alacritty.toml" "$ALACRITTY_LINK" "alacritty"

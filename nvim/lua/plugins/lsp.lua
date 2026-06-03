@@ -21,9 +21,51 @@ return {
         },
       })
 
-      vim.lsp.config("volar", {
-        init_options = {
-          vue = { hybridMode = false },
+      local function vue_ts_plugin_path()
+        local npm_root = vim.trim(vim.fn.system({ "npm", "root", "-g" }))
+        if npm_root ~= "" and vim.fn.isdirectory(npm_root .. "/@vue/language-server") == 1 then
+          return npm_root .. "/@vue/language-server"
+        end
+        local exe = vim.fn.exepath("vue-language-server")
+        if exe ~= "" then
+          local candidate = vim.fs.dirname(vim.fs.dirname(exe)) .. "/lib/node_modules/@vue/language-server"
+          if vim.fn.isdirectory(candidate) == 1 then
+            return candidate
+          end
+        end
+        return nil
+      end
+
+      local vue_plugin_path = vue_ts_plugin_path()
+      if not vue_plugin_path then
+        vim.notify(
+          "vue_ls: install @vue/language-server globally (see install.sh)",
+          vim.log.levels.WARN
+        )
+      end
+
+      -- vue_ls handles template/style; vtsls + @vue/typescript-plugin handles <script>.
+      vim.lsp.config("vtsls", {
+        settings = vue_plugin_path and {
+          vtsls = {
+            tsserver = {
+              globalPlugins = {
+                {
+                  name = "@vue/typescript-plugin",
+                  location = vue_plugin_path,
+                  languages = { "vue" },
+                  configNamespace = "typescript",
+                },
+              },
+            },
+          },
+        } or nil,
+        filetypes = {
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "vue",
         },
       })
 
@@ -103,7 +145,7 @@ return {
         "ruff",
         "clangd",
         "vtsls",
-        "volar",
+        "vue_ls",
         "intelephense",
         "bashls",
       })

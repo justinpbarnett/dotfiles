@@ -1,0 +1,14 @@
+# Yazi config (macOS + Linux). Install: ~/.config/yazi -> dotfiles/yazi
+
+[mgr]
+show_hidden = true
+
+[opener]
+edit = [
+  { run = "nvim %s", desc = "Neovim", block = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+  { url = "*.{md,txt,toml,yml,yaml,json,jsonc,js,ts,tsx,jsx,lua,rs,py,go,sh,zsh,bash,vim,c,cpp,h,hpp,cs,php,rb,sql,html,css,scss,xml,conf,ini,env,gradle,kt,swift,dockerfile,gitignore,editorconfig}", use = "edit" },
+]

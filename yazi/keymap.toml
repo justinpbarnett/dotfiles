@@ -1,0 +1,4 @@
+[mgr]
+append_keymap = [
+  { on = "e", run = "open --hovered", desc = "Open in Neovim" },
+]
