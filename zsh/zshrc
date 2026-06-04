@@ -18,10 +18,13 @@ zstyle ':vcs_info:git:*' formats ' %F{yellow}(%b)%f'
 PROMPT='%F{cyan}%1~%f${vcs_info_msg_0_} ❯ '
 
 # --- Tmux sessionizer (script installed by install.sh) ---
-if command -v fzf &>/dev/null && command -v tmux &>/dev/null && command -v tmux-sessionizer &>/dev/null; then
-  alias ts='tmux-sessionizer'
-  bindkey -s '^F' 'tmux-sessionizer\n'
+# Use $DOTFILES path directly: ~/bin/tmux-sessionizer can shadow ~/.local/bin.
+_sessionizer="$DOTFILES/tmux/tmux-sessionizer"
+if command -v fzf &>/dev/null && command -v tmux &>/dev/null && [[ -x "$_sessionizer" ]]; then
+  alias ts="$_sessionizer"
+  bindkey -s '^F' "$_sessionizer"$'\n'
 fi
+unset _sessionizer
 
 # --- Passion Camp (optional local scripts) ---
 passion-start() {
