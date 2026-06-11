@@ -174,6 +174,50 @@ EOF
 
 install_roslyn_ls
 
+# Laravel LSP — framework-aware language server for PHP + Blade (laravel/lsp).
+# Distributed as standalone native binaries per platform; we drop the right one
+# at ~/.local/bin/laravel-lsp (which is on PATH). nvim wires it up in lsp.lua.
+install_laravel_lsp() {
+  has curl || { warn "curl not found, skipping laravel-lsp"; return; }
+
+  local arch os plat
+  case "$(uname -m)" in
+    arm64|aarch64) arch="arm64" ;;
+    x86_64)        arch="x64" ;;
+    *) warn "unsupported arch for laravel-lsp: $(uname -m)"; return ;;
+  esac
+  case "$(uname -s)" in
+    Darwin) os="darwin" ;;
+    Linux)  os="linux" ;;
+    *) warn "unsupported OS for laravel-lsp: $(uname -s)"; return ;;
+  esac
+  plat="${arch}-${os}"
+
+  # Bump when you want a newer Laravel LSP build.
+  local version="v0.0.22"
+  local bin="$HOME/.local/bin/laravel-lsp"
+  local stamp="$HOME/.local/share/laravel-lsp/.version"
+
+  if [[ -x "$bin" ]] && [[ -f "$stamp" ]] && [[ "$(<"$stamp")" == "$version" ]]; then
+    log "laravel-lsp $version already installed"
+    return
+  fi
+
+  log "Installing laravel-lsp $version ($plat)"
+  local url="https://github.com/laravel/lsp/releases/download/${version}/server-${version}-${plat}"
+  mkdir -p "$HOME/.local/bin" "$(dirname "$stamp")"
+  if curl -fsSL -o "$bin.tmp" "$url"; then
+    chmod +x "$bin.tmp"
+    mv "$bin.tmp" "$bin"
+    echo "$version" > "$stamp"
+  else
+    rm -f "$bin.tmp"
+    warn "laravel-lsp download failed ($url)"
+  fi
+}
+
+install_laravel_lsp
+
 if has composer; then
   log "Installing composer globals"
   composer global require laravel/pint

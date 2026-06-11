@@ -77,6 +77,17 @@ return {
       end
       vim.lsp.config("clangd", { cmd = { clangd_path(), "--background-index", "--clang-tidy" } })
 
+      -- Laravel LSP — framework-aware features for PHP + Blade (routes, views, Blade
+      -- components, translations, config, env, middleware, Eloquent, etc.).
+      -- Standalone binary installed to ~/.local/bin/laravel-lsp (see install.sh).
+      -- Runs alongside intelephense: intelephense gives general PHP intelligence,
+      -- laravel_lsp adds the framework-aware layer and drives Blade files.
+      vim.lsp.config("laravel_lsp", {
+        cmd = { "laravel-lsp" },
+        filetypes = { "php", "blade" },
+        root_markers = { "artisan", "composer.json", ".git" },
+      })
+
       -- =====================================================================
       -- Roslyn (C#) — best current setup for Unity (2026)
       -- =====================================================================
@@ -147,6 +158,7 @@ return {
         "vtsls",
         "vue_ls",
         "intelephense",
+        "laravel_lsp",
         "bashls",
       })
 
