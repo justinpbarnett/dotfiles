@@ -3,6 +3,15 @@ local map = vim.keymap.set
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Write buffer" })
 map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit window" })
 
+map("n", "<leader>o", function()
+  local file = vim.fn.expand("%:p")
+  if file == "" then
+    vim.notify("No file in current buffer", vim.log.levels.WARN)
+    return
+  end
+  vim.ui.open(file)
+end, { desc = "Open current file in browser" })
+
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
