@@ -3,7 +3,7 @@
 candidate_dirs=("$HOME/dev" "$HOME/.config" "$HOME/dev/practice")
 project_dirs=()
 for dir in "${candidate_dirs[@]}"; do
-    [[ -d "$dir" ]] && project_dirs+=("$dir")
+  [[ -d "$dir" ]] && project_dirs+=("$dir")
 done
 [[ ${#project_dirs[@]} -eq 0 ]] && exit 0
 
@@ -13,11 +13,11 @@ selected_dir=$(find "${project_dirs[@]}" -maxdepth 2 -type d -print 2>/dev/null 
 session_name=$(basename "$selected_dir" | tr '.' '_')
 
 if ! tmux has-session -t="$session_name" 2>/dev/null; then
-    tmux new-session -ds "$session_name" -c "$selected_dir"
+  tmux new-session -ds "$session_name" -c "$selected_dir"
 fi
 
 if [[ -n "$TMUX" ]]; then
-    tmux switch-client -t "$session_name"
+  tmux switch-client -t "$session_name"
 else
-    tmux attach-session -t "$session_name"
+  tmux attach-session -t "$session_name"
 fi
